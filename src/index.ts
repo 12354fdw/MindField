@@ -1,27 +1,9 @@
-import { createBot } from "mineflayer";
+import pathfinder from "mineflayer-pathfinder";
+import { Agent } from "./agent.js";
 import { SECRETS } from "./secrets.js";
-import pathfinder, { Movements } from "mineflayer-pathfinder";
 
-const bot = createBot({
-	host: SECRETS.server,
-	username: "gurtyo",
-});
-
-bot.loadPlugin(pathfinder.pathfinder);
-
-bot.once("spawn", async () => {
-	const move = new Movements(bot);
-
-	// quick fix for the sea grass problem
-	move.blocksToAvoid.add(bot.registry.blocksByName["seagrass"].id);
-	move.blocksToAvoid.add(bot.registry.blocksByName["tall_seagrass"].id);
-	move.blocksToAvoid.add(bot.registry.blocksByName["kelp"].id);
-
-	move.allowSprinting = true;
-	move.canOpenDoors = true;
-
-	bot.pathfinder.setMovements(move);
-});
+const agent = new Agent(SECRETS.server, "gurtyo");
+const bot = agent.bot;
 
 bot.on("chat", async (username: string, msg: string) => {
 	if (username === "gurtyo") return;
