@@ -1,11 +1,12 @@
 import { Bot, createBot } from "mineflayer";
 import { loader as autoEat } from "mineflayer-auto-eat";
-import { Movements, pathfinder } from "mineflayer-pathfinder";
 import autoAuth from "mineflayer-auto-auth";
-import { SECRETS } from "./secrets.js";
+import { SECRETS } from "../secrets.js";
+import { ModulesRegistry } from "./modules/index.js";
 
 export class Agent {
 	public readonly bot: Bot;
+	private readonly moduleRegistry: ModulesRegistry;
 
 	constructor(host: string, username: string) {
 		this.bot = createBot({
@@ -20,22 +21,13 @@ export class Agent {
 			},
 		});
 
-		this.bot.loadPlugin(pathfinder);
-
 		const bot = this.bot;
+		this.moduleRegistry = new ModulesRegistry(bot);
+
 		this.bot.once("spawn", async () => {
 			bot.chat("hello");
-			const move = new Movements(bot);
 
-			// quick fix for the sea grass problem
-			move.blocksToAvoid.add(bot.registry.blocksByName["seagrass"].id);
-			move.blocksToAvoid.add(bot.registry.blocksByName["tall_seagrass"].id);
-			move.blocksToAvoid.add(bot.registry.blocksByName["kelp"].id);
-
-			move.allowSprinting = true;
-			move.canOpenDoors = true;
-
-			bot.pathfinder.setMovements(move);
+			this.moduleRegistry.initSpawn();
 
 			this.initEating(bot);
 		});

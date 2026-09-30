@@ -1,5 +1,5 @@
 import pathfinder from "mineflayer-pathfinder";
-import { Agent } from "./agent.js";
+import { Agent } from "./agent/agent.js";
 import { SECRETS } from "./secrets.js";
 
 const agent = new Agent(SECRETS.server, "gurtyo");
