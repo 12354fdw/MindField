@@ -8,11 +8,25 @@ export class ModulePvp extends BaseModule {
 		bot.loadPlugin(pvp.plugin);
 
 		bot.on("entityHurt", async (entity, source) => {
+			bot.autoEat.setOpts({
+				minHealth: 10,
+			});
+
 			if (entity !== bot.entity) return;
 
 			this.equipItems();
 
-			await bot.pvp.attack(source);
+			bot.pvp.attack(source);
+
+			await new Promise<void>((resolve) => {
+				bot.once("stoppedAttacking", () => {
+					resolve();
+				});
+			});
+
+			bot.autoEat.setOpts({
+				minHealth: 20,
+			});
 		});
 	}
 
@@ -23,8 +37,8 @@ export class ModulePvp extends BaseModule {
 		const sword = bot.inventory.items().find((item) => item.name.includes("sword"));
 		const shield = bot.inventory.items().find((item) => item.name.includes("shield"));
 
-		if (sword) bot.equip(sword, "hand");
 		if (shield) bot.equip(shield, "off-hand");
+		if (sword) bot.equip(sword, "hand");
 		if (axe) bot.equip(axe, "hand");
 	}
 }
