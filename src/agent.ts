@@ -1,4 +1,5 @@
 import { Bot, createBot } from "mineflayer";
+import { loader as autoEat } from "mineflayer-auto-eat";
 import { Movements, pathfinder } from "mineflayer-pathfinder";
 
 export class Agent {
@@ -25,6 +26,22 @@ export class Agent {
 			move.canOpenDoors = true;
 
 			bot.pathfinder.setMovements(move);
+
+			this.initEating(bot);
+		});
+	}
+
+	//
+
+	private initEating(bot: Bot) {
+		bot.loadPlugin(autoEat);
+		bot.autoEat.enableAuto();
+
+		bot.autoEat.setOpts({
+			returnToLastItem: true,
+			minHealth: 20,
+			priority: "saturation",
+			offhand: true,
 		});
 	}
 }
