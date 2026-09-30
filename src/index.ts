@@ -5,7 +5,7 @@ import { SECRETS } from "./secrets.js";
 const agent = new Agent(SECRETS.server, "gurtyo");
 const bot = agent.bot;
 
-bot.on("chat", async (username: string, msg: string) => {
+bot.on("whisper", async (username: string, msg: string) => {
 	if (username === "gurtyo") return;
 
 	const match = msg.match(/(-?\d+)\s+(-?\d+)\s+(-?\d+)/);
