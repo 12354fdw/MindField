@@ -1,6 +1,8 @@
 import { CommandBuilder, CommandDispatcher } from "@12354fdw/lcmd";
 import { CommandContext } from "./context.js";
 import pathfinder from "mineflayer-pathfinder";
+import { MiningManager } from "../orchestration/mining/miningManager.js";
+import { Vec3 } from "vec3";
 
 export class CommandManager {
 	public readonly dispatcher: CommandDispatcher<CommandContext>;
@@ -33,6 +35,28 @@ export class CommandManager {
 					const bot = ctx.agent.bot;
 					ctx.agent.stopWalking();
 					bot.whisper(ctx.source, `Stopped walking.`);
+				})
+				.build(),
+		);
+
+		this.dispatcher.register(
+			new CommandBuilder<CommandContext>()
+				.name("MINEAREA")
+				.parameter("ax", "number")
+				.parameter("ay", "number")
+				.parameter("az", "number")
+				.parameter("bx", "number")
+				.parameter("by", "number")
+				.parameter("bz", "number")
+				.handler(async (ctx, args) => {
+					const manager = new MiningManager(
+						new Vec3(args.ax, args.ay, args.az),
+						new Vec3(args.bx, args.by, args.bz),
+					);
+
+					for (const spec of manager.chunks) {
+						await ctx.agent.bot.building.mineChunk(spec);
+					}
 				})
 				.build(),
 		);

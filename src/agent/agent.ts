@@ -5,6 +5,12 @@ import { ModulesRegistry } from "./modules/index.js";
 import pathfinder from "mineflayer-pathfinder";
 import { ModulePathfinding } from "./modules/pathfinding.js";
 
+declare module "mineflayer" {
+	interface Bot {
+		agent: Agent;
+	}
+}
+
 export class Agent {
 	public readonly bot: Bot;
 	private readonly moduleRegistry: ModulesRegistry;
@@ -21,6 +27,8 @@ export class Agent {
 				ignoreRepeat: true,
 			},
 		});
+
+		this.bot.agent = this;
 
 		const bot = this.bot;
 		this.moduleRegistry = new ModulesRegistry(bot);
