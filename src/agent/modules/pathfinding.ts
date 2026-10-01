@@ -21,8 +21,9 @@ export class ModulePathfinding extends BaseModule {
 
 	public async goto(goal: pathfinder.goals.Goal) {
 		try {
-			await this.bot.pathfinder.setGoal(goal);
-		} catch {
+			await this.bot.pathfinder.goto(goal);
+		} catch (raw: unknown) {
+			if (raw instanceof Error && raw.name === "GoalChanged") return;
 			this.goto(goal);
 		}
 	}

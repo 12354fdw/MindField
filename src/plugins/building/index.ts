@@ -1,17 +1,19 @@
 import { Bot } from "mineflayer";
 import { Vec3 } from "vec3";
+import { ChunkMiningSpec } from "../../orchestration/mining/miningManager.js";
 
 declare module "mineflayer" {
 	interface Bot {
 		building: {
-			mineArea: (a: Vec3, b: Vec3) => Promise<void>;
+			mineChunk: (chunkSpec: ChunkMiningSpec) => Promise<void>;
 		};
 	}
 }
 
 export function loader(bot: Bot) {
 	bot.building = {
-		mineArea: async (a: Vec3, b: Vec3) => {
+		mineChunk: async (chunkSpec) => {
+			
 		},
 	};
 }
