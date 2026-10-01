@@ -1,7 +1,7 @@
 import { CommandBuilder, CommandDispatcher } from "@12354fdw/lcmd";
 import { CommandContext } from "./context.js";
 import pathfinder from "mineflayer-pathfinder";
-import { MiningManager } from "../orchestration/mining/miningManager.js";
+import { MiningPlanner } from "../orchestration/mining/miningManager.js";
 import { Vec3 } from "vec3";
 
 export class CommandManager {
@@ -49,7 +49,7 @@ export class CommandManager {
 				.parameter("by", "number")
 				.parameter("bz", "number")
 				.handler(async (ctx, args) => {
-					const manager = new MiningManager(
+					const manager = new MiningPlanner(
 						new Vec3(args.ax, args.ay, args.az),
 						new Vec3(args.bx, args.by, args.bz),
 					);

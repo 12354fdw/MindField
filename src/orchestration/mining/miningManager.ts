@@ -4,7 +4,7 @@ export interface ChunkMiningSpec {
 	center: Vec3;
 }
 
-export class MiningManager {
+export class MiningPlanner {
 	public readonly chunks: ChunkMiningSpec[] = [];
 
 	constructor(a: Vec3, b: Vec3) {
