@@ -2,6 +2,8 @@ import { Bot, createBot } from "mineflayer";
 import autoAuth from "mineflayer-auto-auth";
 import { SECRETS } from "../secrets.js";
 import { ModulesRegistry } from "./modules/index.js";
+import pathfinder from "mineflayer-pathfinder";
+import { ModulePathfinding } from "./modules/pathfinding.js";
 
 export class Agent {
 	public readonly bot: Bot;
@@ -28,5 +30,15 @@ export class Agent {
 
 			this.moduleRegistry.initSpawn();
 		});
+	}
+
+	// forwarders
+
+	public async goto(goal: pathfinder.goals.Goal) {
+		await (this.moduleRegistry.get(ModulePathfinding) as ModulePathfinding).goto(goal);
+	}
+
+	public stopWalking() {
+		(this.moduleRegistry.get(ModulePathfinding) as ModulePathfinding).stop();
 	}
 }

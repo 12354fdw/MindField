@@ -23,6 +23,15 @@ export class ModulesRegistry {
 
 	//
 
+	public get(ModuleClass: new (bot: Bot) => BaseModule) {
+		for (const module of this.modules) {
+			if (module instanceof ModuleClass) {
+				return module;
+			}
+		}
+		throw new Error(`Module not found: ${ModuleClass.name}`);
+	}
+
 	private registerModule(ModuleClass: new (bot: Bot) => BaseModule) {
 		this.modules.add(new ModuleClass(this.bot));
 	}

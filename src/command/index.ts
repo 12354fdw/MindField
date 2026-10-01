@@ -21,7 +21,18 @@ export class CommandManager {
 
 					const goal = new pathfinder.goals.GoalBlock(x, y, z);
 					bot.whisper(ctx.source, `Going to ${x}, ${y}, ${z}`);
-					bot.pathfinder.goto(goal);
+					ctx.agent.goto(goal);
+				})
+				.build(),
+		);
+
+		this.dispatcher.register(
+			new CommandBuilder<CommandContext>()
+				.name("STOPWALK")
+				.handler((ctx) => {
+					const bot = ctx.agent.bot;
+					ctx.agent.stopWalking();
+					bot.whisper(ctx.source, `Stopped walking.`);
 				})
 				.build(),
 		);
