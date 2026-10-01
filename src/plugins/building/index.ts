@@ -1,17 +1,17 @@
 import { Bot } from "mineflayer";
+import { Vec3 } from "vec3";
 
 declare module "mineflayer" {
 	interface Bot {
 		building: {
-			test: (msg: string) => void;
+			mineArea: (a: Vec3, b: Vec3) => Promise<void>;
 		};
 	}
 }
 
 export function loader(bot: Bot) {
 	bot.building = {
-		test: (msg: string) => {
-			bot.chat(msg);
+		mineArea: async (a: Vec3, b: Vec3) => {
 		},
 	};
 }
