@@ -3,6 +3,7 @@ import { BaseModule } from "./base.js";
 import { ModulePathfinding } from "./pathfinding.js";
 import { ModuleAutoeat } from "./autoeat.js";
 import { ModulePvp } from "./pvp.js";
+import { ModuleBuilding } from "./building.js";
 
 export class ModulesRegistry {
 	private modules = new Set<BaseModule>();
@@ -11,6 +12,7 @@ export class ModulesRegistry {
 		this.registerModule(ModulePathfinding);
 		this.registerModule(ModuleAutoeat);
 		this.registerModule(ModulePvp);
+		this.registerModule(ModuleBuilding);
 	}
 
 	public initSpawn() {
