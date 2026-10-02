@@ -6,6 +6,7 @@ import pathfinder from "mineflayer-pathfinder";
 import { ModulePathfinding } from "./modules/pathfinding.js";
 import { ChunkMiningSpec } from "../orchestration/mining/miningPlanner.js";
 import { AgentState } from "./state.js";
+import { Signal } from "signal-ts";
 
 declare module "mineflayer" {
 	interface Bot {
@@ -17,6 +18,7 @@ export class Agent {
 	public readonly bot: Bot;
 	private readonly moduleRegistry: ModulesRegistry;
 	public state: AgentState = { type: "idle" };
+	public readonly stateSignal = new Signal<AgentState>();
 
 	constructor(host: string, username: string) {
 		this.bot = createBot({
@@ -41,22 +43,27 @@ export class Agent {
 		});
 	}
 
+	private setState(newState: AgentState) {
+		this.state = newState;
+		this.stateSignal.emit(newState);
+	}
+
 	//
 
 	public async goto(goal: pathfinder.goals.Goal) {
-		this.state = { type: "moving", goal };
+		this.setState({ type: "moving", goal });
 		await (this.moduleRegistry.get(ModulePathfinding) as ModulePathfinding).goto(goal);
-		this.state = { type: "idle" };
+		this.setState({ type: "idle" });
 	}
 
 	public stopWalking() {
 		(this.moduleRegistry.get(ModulePathfinding) as ModulePathfinding).stop();
-		this.state = { type: "idle" };
+		this.setState({ type: "idle" });
 	}
 
 	public async mineChunk(spec: ChunkMiningSpec) {
-		this.state = { type: "miningChunk", spec };
+		this.setState({ type: "miningChunk", spec });
 		await this.bot.building.mineChunk(spec);
-		this.state = { type: "idle" };
+		this.setState({ type: "idle" });
 	}
 }
