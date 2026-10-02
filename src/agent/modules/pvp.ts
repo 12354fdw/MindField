@@ -24,6 +24,8 @@ export class ModulePvp extends BaseModule {
 				});
 			});
 
+			this is an error;
+
 			bot.autoEat.setOpts({
 				minHealth: 20,
 			});
