@@ -50,17 +50,14 @@ export class Agent {
 		});
 	}
 
-	public goto(goal: pathfinder.goals.Goal) {
-		this.stateStack.newState({ type: "moving", goal });
+	public async goto(goal: pathfinder.goals.Goal) {
+		const id = this.stateStack.newState({ type: "moving", goal });
+		await this.stateStack.waitForState(id);
 	}
 
-	public stopWalking() {
-		(this.moduleRegistry.get(ModulePathfinding) as ModulePathfinding).stop();
-		this.stateStack.finishedState();
-	}
-
-	public mineChunk(spec: ChunkMiningSpec) {
-		this.stateStack.newState({ type: "miningChunk", spec });
+	public async mineChunk(spec: ChunkMiningSpec) {
+		const id = this.stateStack.newState({ type: "miningChunk", spec });
+		await this.stateStack.waitForState(id);
 	}
 
 	//
