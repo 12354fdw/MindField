@@ -2,8 +2,8 @@ import { Remote } from "comlink";
 import { AgentWorker } from "./agentWorker.js";
 import { StateStack } from "./stateStack.js";
 import { AgentState } from "./state.js";
-import pathfinder from "mineflayer-pathfinder";
 import { ChunkMiningSpec } from "../orchestration/mining/miningPlanner.js";
+import { Vec3 } from "vec3";
 
 export class Agent {
 	constructor(private remote: Remote<AgentWorker>) {}
@@ -16,7 +16,7 @@ export class Agent {
 		return await this.remote.state;
 	}
 
-	public async goto(goal: pathfinder.goals.Goal): Promise<void> {
+	public async goto(goal: Vec3): Promise<void> {
 		await this.remote.goto(goal);
 	}
 

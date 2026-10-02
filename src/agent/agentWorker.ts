@@ -1,12 +1,12 @@
 import { Bot, createBot } from "mineflayer";
 import autoAuth from "mineflayer-auto-auth";
 import { ModulesRegistry } from "./modules/index.js";
-import pathfinder from "mineflayer-pathfinder";
 import { ModulePathfinding } from "./modules/pathfinding.js";
 import { ChunkMiningSpec } from "../orchestration/mining/miningPlanner.js";
 import { AgentState } from "./state.js";
 import { StateStack } from "./stateStack.js";
 import { ModulePvp } from "./modules/pvp.js";
+import { Vec3 } from "vec3";
 
 declare module "mineflayer" {
 	interface Bot {
@@ -49,7 +49,7 @@ export class AgentWorker {
 		});
 	}
 
-	public async goto(goal: pathfinder.goals.Goal) {
+	public async goto(goal: Vec3) {
 		const id = this.stateStack.newState({ type: "moving", goal });
 		await this.stateStack.waitForState(id);
 	}

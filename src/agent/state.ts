@@ -1,6 +1,6 @@
 import { Entity } from "prismarine-entity";
-import pathfinder from "mineflayer-pathfinder";
 import { ChunkMiningSpec } from "../orchestration/mining/miningPlanner.js";
+import { Vec3 } from "vec3";
 
 export type AgentState =
 	| {
@@ -8,7 +8,7 @@ export type AgentState =
 	  }
 	| {
 			type: "moving";
-			goal: pathfinder.goals.Goal;
+			goal: Vec3;
 	  }
 	| {
 			type: "combat";
