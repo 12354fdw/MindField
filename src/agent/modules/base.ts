@@ -1,10 +1,10 @@
 import { Bot } from "mineflayer";
-import { Agent } from "../agent.js";
+import { AgentWorker } from "../agentWorker.js";
 
 export abstract class BaseModule {
 	constructor(
 		protected bot: Bot,
-		protected agent: Agent,
+		protected agent: AgentWorker,
 	) {}
 
 	public abstract initSpawn(): void;

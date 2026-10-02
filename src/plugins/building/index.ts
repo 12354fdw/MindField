@@ -1,6 +1,5 @@
 import { Bot } from "mineflayer";
 import { ChunkMiningSpec } from "../../orchestration/mining/miningPlanner.js";
-import pathfinder from "mineflayer-pathfinder";
 import { Vec3 } from "vec3";
 
 declare module "mineflayer" {
@@ -15,8 +14,7 @@ export function loader(bot: Bot) {
 	bot.building = {
 		mineChunk: async (chunkSpec) => {
 			const { x, y, z } = chunkSpec.center;
-			const goal = new pathfinder.goals.GoalBlock(x, y, z);
-			await bot.agent.goto(goal);
+			await bot.agent.goto(chunkSpec.center);
 
 			for (let dx = -3; dx <= 3; dx++) {
 				for (let dz = -3; dz <= 3; dz++) {

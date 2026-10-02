@@ -31,7 +31,6 @@ export class StateStack {
 		const prevState = this.stack.pop();
 		if (prevState) {
 			this.stack.push(prevState);
-			this.stateSignal.emit(prevState.state);
 		} else {
 			const idleState: AgentState = { type: "idle" };
 			this.stack.push({ state: idleState, id: this.currentId++ });
@@ -43,6 +42,21 @@ export class StateStack {
 		return new Promise((resolve) => {
 			const signal = this.finishedStateSignal.add((finishedId) => {
 				if (finishedId === id) {
+					signal.remove();
+					resolve();
+				}
+			});
+		});
+	}
+
+	public waitForIdle(): Promise<void> {
+		return new Promise((resolve) => {
+			if (this.current.type === "idle") {
+				resolve();
+				return;
+			}
+			const signal = this.stateSignal.add((state) => {
+				if (state.type === "idle") {
 					signal.remove();
 					resolve();
 				}

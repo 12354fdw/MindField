@@ -1,85 +1,32 @@
-import { Bot, createBot } from "mineflayer";
-import autoAuth from "mineflayer-auto-auth";
-import { SECRETS } from "../secrets.js";
-import { ModulesRegistry } from "./modules/index.js";
-import pathfinder from "mineflayer-pathfinder";
-import { ModulePathfinding } from "./modules/pathfinding.js";
-import { ChunkMiningSpec } from "../orchestration/mining/miningPlanner.js";
-import { AgentState } from "./state.js";
+import { Remote } from "comlink";
+import { AgentWorker } from "./agentWorker.js";
 import { StateStack } from "./stateStack.js";
-import { ModulePvp } from "./modules/pvp.js";
-
-declare module "mineflayer" {
-	interface Bot {
-		agent: Agent;
-	}
-}
+import { AgentState } from "./state.js";
+import { ChunkMiningSpec } from "../orchestration/mining/miningPlanner.js";
+import { Vec3 } from "vec3";
 
 export class Agent {
-	public readonly bot: Bot;
-	private readonly moduleRegistry: ModulesRegistry;
-	public readonly stateStack = new StateStack();
-	public get state(): AgentState {
-		return this.stateStack.current;
+	constructor(private remote: Remote<AgentWorker>) {}
+
+	public async getStateStack(): Promise<StateStack> {
+		return await this.remote.stateStack;
 	}
 
-	constructor(host: string, username: string) {
-		this.bot = createBot({
-			host: host,
-			username: username,
-
-			plugins: { "mineflayer-auto-auth": autoAuth },
-			AutoAuth: {
-				logging: true,
-				password: SECRETS.passwd,
-				ignoreRepeat: true,
-			},
-		});
-
-		this.bot.agent = this;
-
-		const bot = this.bot;
-		this.moduleRegistry = new ModulesRegistry(bot, this);
-
-		this.bot.once("spawn", async () => {
-			this.moduleRegistry.initSpawn();
-		});
-
-		this.stateStack.stateSignal.add((newState: AgentState) => {
-			this.handleNewState(newState);
-		});
+	public async getState(): Promise<AgentState> {
+		return await this.remote.state;
 	}
 
-	public async goto(goal: pathfinder.goals.Goal) {
-		const id = this.stateStack.newState({ type: "moving", goal });
-		await this.stateStack.waitForState(id);
+	public async goto(goal: Vec3): Promise<void> {
+		await this.remote.goto(goal);
 	}
 
-	public async mineChunk(spec: ChunkMiningSpec) {
-		const id = this.stateStack.newState({ type: "miningChunk", spec });
-		await this.stateStack.waitForState(id);
+	public async mineChunk(spec: ChunkMiningSpec): Promise<void> {
+		await this.remote.mineChunk(spec);
 	}
 
 	//
 
-	private async handleNewState(state: AgentState) {
-		switch (state.type) {
-			case "combat": {
-				if (state.isSelfDefense) return;
-				await (this.moduleRegistry.get(ModulePvp) as ModulePvp).killEntity(state.entity);
-				break;
-			}
-
-			case "miningChunk": {
-				await this.bot.building.mineChunk(state.spec);
-				break;
-			}
-
-			case "moving": {
-				await (this.moduleRegistry.get(ModulePathfinding) as ModulePathfinding).goto(state.goal);
-			}
-		}
-
-		this.stateStack.finishedState();
+	public async waitForIdle() {
+		await this.remote.waitForIdle();
 	}
 }
