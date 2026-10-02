@@ -1,5 +1,5 @@
 import { Bot } from "mineflayer";
-import { AgentWorker } from "../agent.js";
+import { AgentWorker } from "../agentWorker.js";
 
 export abstract class BaseModule {
 	constructor(

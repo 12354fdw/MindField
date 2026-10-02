@@ -1,5 +1,5 @@
 import { expose } from "comlink";
-import { AgentWorker } from "./agent.js";
+import { AgentWorker } from "./agentWorker.js";
 import { workerData } from "worker_threads";
 
 const { host, username, passwd } = workerData;

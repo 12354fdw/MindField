@@ -1,7 +1,7 @@
 import { Vec3 } from "vec3";
 import { OrchestratedAction } from "./base.js";
 import { ChunkMiningSpec, MiningPlanner } from "../mining/miningPlanner.js";
-import { AgentWorker } from "../../agent/agent.js";
+import { AgentWorker } from "../../agent/agentWorker.js";
 import { AgentState } from "../../agent/state.js";
 
 type MiningActionOptions = {

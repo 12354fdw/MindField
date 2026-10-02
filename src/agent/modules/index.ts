@@ -5,7 +5,7 @@ import { ModuleAutoeat } from "./autoeat.js";
 import { ModulePvp } from "./pvp.js";
 import { ModuleBuilding } from "./building.js";
 import { ModuleTool } from "./tool.js";
-import { AgentWorker } from "../agent.js";
+import { AgentWorker } from "../agentWorker.js";
 
 export class ModulesRegistry {
 	private modules = new Set<BaseModule>();

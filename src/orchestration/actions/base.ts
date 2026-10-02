@@ -1,4 +1,4 @@
-import { AgentWorker } from "../../agent/agent.js";
+import { AgentWorker } from "../../agent/agentWorker.js";
 import { AgentManager } from "../agentManger.js";
 
 export abstract class OrchestratedAction<TOpts> {

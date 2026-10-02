@@ -1,6 +1,5 @@
 import { Bot, createBot } from "mineflayer";
 import autoAuth from "mineflayer-auto-auth";
-import { SECRETS } from "../secrets.js";
 import { ModulesRegistry } from "./modules/index.js";
 import pathfinder from "mineflayer-pathfinder";
 import { ModulePathfinding } from "./modules/pathfinding.js";

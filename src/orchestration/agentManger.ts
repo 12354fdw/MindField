@@ -1,6 +1,7 @@
 import { wrap } from "comlink";
-import { AgentWorker } from "../agent/agent.js";
+import { AgentWorker } from "../agent/agentWorker.js";
 import { SECRETS } from "../secrets.js";
+import { nodeEndpoint } from "../utils/nodeEndpoint.js";
 import { Worker } from "worker_threads";
 
 export class AgentManager {
@@ -16,6 +17,8 @@ export class AgentManager {
 					passwd: SECRETS.passwd,
 				},
 			});
+
+			const agentWorker = wrap<AgentWorker>(nodeEndpoint(worker));
 		}
 	}
 
