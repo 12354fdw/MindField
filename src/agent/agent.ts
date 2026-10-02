@@ -4,6 +4,7 @@ import { SECRETS } from "../secrets.js";
 import { ModulesRegistry } from "./modules/index.js";
 import pathfinder from "mineflayer-pathfinder";
 import { ModulePathfinding } from "./modules/pathfinding.js";
+import { ChunkMiningSpec } from "../orchestration/mining/miningPlanner.js";
 
 declare module "mineflayer" {
 	interface Bot {
@@ -40,7 +41,7 @@ export class Agent {
 		});
 	}
 
-	// forwarders
+	//
 
 	public async goto(goal: pathfinder.goals.Goal) {
 		await (this.moduleRegistry.get(ModulePathfinding) as ModulePathfinding).goto(goal);
@@ -48,5 +49,9 @@ export class Agent {
 
 	public stopWalking() {
 		(this.moduleRegistry.get(ModulePathfinding) as ModulePathfinding).stop();
+	}
+
+	public async mineChunk(spec: ChunkMiningSpec) {
+		await this.bot.building.mineChunk(spec);
 	}
 }
