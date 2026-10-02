@@ -1,13 +1,16 @@
+import readline from "node:readline";
+import { CommandManager } from "./command/index.js";
 import { AgentManager } from "./orchestration/agentManger.js";
 
 const manager = new AgentManager();
 
-// const agent = new Agent(SECRETS.server, "gurtyo");
-// const bot = agent.bot;
+const commandManager = new CommandManager();
 
-// const commandManager = new CommandManager();
+const rl = readline.createInterface({
+	input: process.stdin,
+	output: process.stdout,
+});
 
-// bot.on("whisper", async (username: string, msg: string) => {
-// 	if (username === "gurtyo") return;
-// 	commandManager.runCommand(msg, { agent, source: username });
-// });
+rl.on("line", (input: string) => {
+	commandManager.runCommand(input, { agentManager: manager });
+});

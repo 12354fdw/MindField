@@ -1,6 +1,5 @@
-import { Agent } from "../agent/agent.js";
+import { AgentManager } from "../orchestration/agentManger.js";
 
 export type CommandContext = {
-	agent: Agent;
-	source: string;
+	agentManager: AgentManager;
 };
