@@ -1,9 +1,9 @@
-import { Agent } from "../../agent/agent.js";
+import { AgentWorker } from "../../agent/agent.js";
 import { AgentManager } from "../agentManger.js";
 
 export abstract class OrchestratedAction<TOpts> {
 	constructor(
-		protected assignedAgents: Agent[],
+		protected assignedAgents: AgentWorker[],
 		protected agentManager: AgentManager,
 	) {}
 

@@ -1,7 +1,7 @@
 import { Vec3 } from "vec3";
 import { OrchestratedAction } from "./base.js";
 import { ChunkMiningSpec, MiningPlanner } from "../mining/miningPlanner.js";
-import { Agent } from "../../agent/agent.js";
+import { AgentWorker } from "../../agent/agent.js";
 import { AgentState } from "../../agent/state.js";
 
 type MiningActionOptions = {
@@ -11,7 +11,7 @@ type MiningActionOptions = {
 
 export class OrchestratedMiningAction extends OrchestratedAction<MiningActionOptions> {
 	private chunks: ChunkMiningSpec[] = [];
-	private agentListenerRemoves = new Map<Agent, () => void>();
+	private agentListenerRemoves = new Map<AgentWorker, () => void>();
 
 	public async execute({ a, b }: MiningActionOptions): Promise<void> {
 		const planner = new MiningPlanner(a, b);
@@ -30,7 +30,7 @@ export class OrchestratedMiningAction extends OrchestratedAction<MiningActionOpt
 		});
 	}
 
-	public async assignChunkToAgent(agent: Agent) {
+	public async assignChunkToAgent(agent: AgentWorker) {
 		const chunk = this.chunks.shift();
 
 		if (!chunk) {

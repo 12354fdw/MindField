@@ -11,11 +11,11 @@ import { ModulePvp } from "./modules/pvp.js";
 
 declare module "mineflayer" {
 	interface Bot {
-		agent: Agent;
+		agent: AgentWorker;
 	}
 }
 
-export class Agent {
+export class AgentWorker {
 	public readonly bot: Bot;
 	private readonly moduleRegistry: ModulesRegistry;
 	public readonly stateStack = new StateStack();
