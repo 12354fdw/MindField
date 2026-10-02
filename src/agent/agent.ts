@@ -23,7 +23,7 @@ export class AgentWorker {
 		return this.stateStack.current;
 	}
 
-	constructor(host: string, username: string) {
+	constructor(host: string, username: string, password: string) {
 		this.bot = createBot({
 			host: host,
 			username: username,
@@ -31,7 +31,7 @@ export class AgentWorker {
 			plugins: { "mineflayer-auto-auth": autoAuth },
 			AutoAuth: {
 				logging: true,
-				password: SECRETS.passwd,
+				password: password,
 				ignoreRepeat: true,
 			},
 		});

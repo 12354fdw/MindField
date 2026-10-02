@@ -1,5 +1,7 @@
+import { wrap } from "comlink";
 import { AgentWorker } from "../agent/agent.js";
 import { SECRETS } from "../secrets.js";
+import { Worker } from "worker_threads";
 
 export class AgentManager {
 	private agents = new Set<AgentWorker>();
@@ -7,9 +9,13 @@ export class AgentManager {
 
 	constructor() {
 		for (let i = 0; i < SECRETS.agentCount; i++) {
-			const agent = new AgentWorker(SECRETS.server, `gurtyo${i}`);
-			this.agents.add(agent);
-			this.idleAgents.add(agent);
+			const worker = new Worker("../agent/worker.ts", {
+				workerData: {
+					host: SECRETS.server,
+					username: `gurtyo${i}`,
+					passwd: SECRETS.passwd,
+				},
+			});
 		}
 	}
 
