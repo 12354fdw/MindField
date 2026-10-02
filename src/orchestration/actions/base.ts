@@ -1,7 +1,7 @@
 import { Agent } from "../../agent/agent.js";
 
-export abstract class OrchestratedAction {
+export abstract class OrchestratedAction<TOpts> {
 	constructor(protected assignedAgents: Agent[]) {}
 
-	public abstract execute(): Promise<void> | void;
+	public abstract execute(options: TOpts): Promise<void> | void;
 }
