@@ -26,7 +26,7 @@ export class ModulePathfinding extends BaseModule {
 			if (raw instanceof Error && raw.name === "GoalChanged") return;
 			this.goto(goal);
 		}
-	}
+	} 
 
 	public stop() {
 		this.bot.pathfinder.stop();
