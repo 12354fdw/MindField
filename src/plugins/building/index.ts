@@ -1,5 +1,5 @@
 import { Bot } from "mineflayer";
-import { ChunkMiningSpec } from "../../orchestration/mining/miningManager.js";
+import { ChunkMiningSpec } from "../../orchestration/mining/miningPlanner.js";
 import pathfinder from "mineflayer-pathfinder";
 import { Vec3 } from "vec3";
 
