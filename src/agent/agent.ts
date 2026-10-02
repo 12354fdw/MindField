@@ -7,6 +7,7 @@ import { ModulePathfinding } from "./modules/pathfinding.js";
 import { ChunkMiningSpec } from "../orchestration/mining/miningPlanner.js";
 import { AgentState } from "./state.js";
 import { StateStack } from "./stateStack.js";
+import { ModulePvp } from "./modules/pvp.js";
 
 declare module "mineflayer" {
 	interface Bot {
@@ -43,13 +44,14 @@ export class Agent {
 		this.bot.once("spawn", async () => {
 			this.moduleRegistry.initSpawn();
 		});
+
+		this.stateStack.stateSignal.add((newState: AgentState) => {
+			this.handleNewState(newState);
+		});
 	}
 
-	public goto(goal: pathfinder.goals.Goal): Promise<void> {
+	public goto(goal: pathfinder.goals.Goal) {
 		this.stateStack.newState({ type: "moving", goal });
-		return (this.moduleRegistry.get(ModulePathfinding) as ModulePathfinding).goto(goal).then(() => {
-			this.stateStack.finishedState();
-		});
 	}
 
 	public stopWalking() {
@@ -57,9 +59,30 @@ export class Agent {
 		this.stateStack.finishedState();
 	}
 
-	public async mineChunk(spec: ChunkMiningSpec) {
+	public mineChunk(spec: ChunkMiningSpec) {
 		this.stateStack.newState({ type: "miningChunk", spec });
-		await this.bot.building.mineChunk(spec);
+	}
+
+	//
+
+	private async handleNewState(state: AgentState) {
+		switch (state.type) {
+			case "combat": {
+				if (state.isSelfDefense) return;
+				await (this.moduleRegistry.get(ModulePvp) as ModulePvp).killEntity(state.entity);
+				break;
+			}
+
+			case "miningChunk": {
+				await this.bot.building.mineChunk(state.spec);
+				break;
+			}
+
+			case "moving": {
+				await (this.moduleRegistry.get(ModulePathfinding) as ModulePathfinding).goto(state.goal);
+			}
+		}
+
 		this.stateStack.finishedState();
 	}
 }

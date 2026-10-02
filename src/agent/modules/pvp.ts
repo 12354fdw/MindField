@@ -1,5 +1,6 @@
 import { BaseModule } from "./base.js";
 import pvp from "mineflayer-pvp";
+import entity from "prismarine-entity";
 
 export class ModulePvp extends BaseModule {
 	public initSpawn(): void {
@@ -20,15 +21,7 @@ export class ModulePvp extends BaseModule {
 				minHealth: 10,
 			});
 
-			this.equipItems();
-
-			bot.pvp.attack(source);
-
-			await new Promise<void>((resolve) => {
-				bot.once("stoppedAttacking", () => {
-					resolve();
-				});
-			});
+			this.killEntity(source);
 
 			bot.autoEat.setOpts({
 				minHealth: 20,
@@ -38,7 +31,20 @@ export class ModulePvp extends BaseModule {
 		});
 	}
 
-	public equipItems() {
+	public async killEntity(entity: entity.Entity) {
+		this.equipItems();
+		this.bot.pvp.attack(entity);
+
+		await new Promise<void>((resolve) => {
+			this.bot.once("stoppedAttacking", () => {
+				resolve();
+			});
+		});
+	}
+
+	//
+
+	private equipItems() {
 		const bot = this.bot;
 
 		const axe = bot.inventory.items().find((item) => item.name.includes("axe"));
