@@ -5,6 +5,8 @@ import { ModulesRegistry } from "./modules/index.js";
 import pathfinder from "mineflayer-pathfinder";
 import { ModulePathfinding } from "./modules/pathfinding.js";
 import { ChunkMiningSpec } from "../orchestration/mining/miningPlanner.js";
+import { AgentState } from "./state.js";
+import { StateStack } from "./stateStack.js";
 
 declare module "mineflayer" {
 	interface Bot {
@@ -15,6 +17,10 @@ declare module "mineflayer" {
 export class Agent {
 	public readonly bot: Bot;
 	private readonly moduleRegistry: ModulesRegistry;
+	public readonly stateStack = new StateStack();
+	public get state(): AgentState {
+		return this.stateStack.current;
+	}
 
 	constructor(host: string, username: string) {
 		this.bot = createBot({
@@ -35,23 +41,25 @@ export class Agent {
 		this.moduleRegistry = new ModulesRegistry(bot);
 
 		this.bot.once("spawn", async () => {
-			bot.chat("hello");
-
 			this.moduleRegistry.initSpawn();
 		});
 	}
 
-	//
-
-	public async goto(goal: pathfinder.goals.Goal) {
-		await (this.moduleRegistry.get(ModulePathfinding) as ModulePathfinding).goto(goal);
+	public goto(goal: pathfinder.goals.Goal): Promise<void> {
+		this.stateStack.newState({ type: "moving", goal });
+		return (this.moduleRegistry.get(ModulePathfinding) as ModulePathfinding).goto(goal).then(() => {
+			this.stateStack.finishedState();
+		});
 	}
 
 	public stopWalking() {
 		(this.moduleRegistry.get(ModulePathfinding) as ModulePathfinding).stop();
+		this.stateStack.finishedState();
 	}
 
 	public async mineChunk(spec: ChunkMiningSpec) {
+		this.stateStack.newState({ type: "miningChunk", spec });
 		await this.bot.building.mineChunk(spec);
+		this.stateStack.finishedState();
 	}
 }
