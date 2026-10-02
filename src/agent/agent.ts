@@ -23,4 +23,10 @@ export class Agent {
 	public async mineChunk(spec: ChunkMiningSpec): Promise<void> {
 		await this.remote.mineChunk(spec);
 	}
+
+	//
+
+	public async waitForIdle() {
+		await this.remote.waitForIdle();
+	}
 }

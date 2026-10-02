@@ -50,6 +50,21 @@ export class StateStack {
 		});
 	}
 
+	public waitForIdle(): Promise<void> {
+		return new Promise((resolve) => {
+			if (this.current.type === "idle") {
+				resolve();
+				return;
+			}
+			const signal = this.stateSignal.add((state) => {
+				if (state.type === "idle") {
+					signal.remove();
+					resolve();
+				}
+			});
+		});
+	}
+
 	public get current(): AgentState {
 		return this.stack[this.stack.length - 1]?.state ?? { type: "idle" };
 	}

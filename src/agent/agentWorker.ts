@@ -81,4 +81,10 @@ export class AgentWorker {
 
 		this.stateStack.finishedState();
 	}
+
+	//
+
+	public async waitForIdle() {
+		await this.stateStack.waitForIdle();
+	}
 }
