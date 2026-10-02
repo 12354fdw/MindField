@@ -35,8 +35,6 @@ export class Agent {
 		this.moduleRegistry = new ModulesRegistry(bot);
 
 		this.bot.once("spawn", async () => {
-			bot.chat("hello");
-
 			this.moduleRegistry.initSpawn();
 		});
 	}
