@@ -5,11 +5,15 @@ import { ModuleAutoeat } from "./autoeat.js";
 import { ModulePvp } from "./pvp.js";
 import { ModuleBuilding } from "./building.js";
 import { ModuleTool } from "./tool.js";
+import { Agent } from "../agent.js";
 
 export class ModulesRegistry {
 	private modules = new Set<BaseModule>();
 
-	constructor(private bot: Bot) {
+	constructor(
+		private bot: Bot,
+		private agent: Agent,
+	) {
 		this.registerModule(ModulePathfinding);
 		this.registerModule(ModuleAutoeat);
 		this.registerModule(ModulePvp);
@@ -25,7 +29,7 @@ export class ModulesRegistry {
 
 	//
 
-	public get(ModuleClass: new (bot: Bot) => BaseModule) {
+	public get(ModuleClass: new (bot: Bot, agent: Agent) => BaseModule) {
 		for (const module of this.modules) {
 			if (module instanceof ModuleClass) {
 				return module;
@@ -34,7 +38,7 @@ export class ModulesRegistry {
 		throw new Error(`Module not found: ${ModuleClass.name}`);
 	}
 
-	private registerModule(ModuleClass: new (bot: Bot) => BaseModule) {
-		this.modules.add(new ModuleClass(this.bot));
+	private registerModule(ModuleClass: new (bot: Bot, agent: Agent) => BaseModule) {
+		this.modules.add(new ModuleClass(this.bot, this.agent));
 	}
 }

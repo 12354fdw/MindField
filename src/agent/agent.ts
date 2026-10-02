@@ -7,6 +7,7 @@ import { ModulePathfinding } from "./modules/pathfinding.js";
 import { ChunkMiningSpec } from "../orchestration/mining/miningPlanner.js";
 import { AgentState } from "./state.js";
 import { StateStack } from "./stateStack.js";
+import { ModulePvp } from "./modules/pvp.js";
 
 declare module "mineflayer" {
 	interface Bot {
@@ -38,28 +39,47 @@ export class Agent {
 		this.bot.agent = this;
 
 		const bot = this.bot;
-		this.moduleRegistry = new ModulesRegistry(bot);
+		this.moduleRegistry = new ModulesRegistry(bot, this);
 
 		this.bot.once("spawn", async () => {
 			this.moduleRegistry.initSpawn();
 		});
-	}
 
-	public goto(goal: pathfinder.goals.Goal): Promise<void> {
-		this.stateStack.newState({ type: "moving", goal });
-		return (this.moduleRegistry.get(ModulePathfinding) as ModulePathfinding).goto(goal).then(() => {
-			this.stateStack.finishedState();
+		this.stateStack.stateSignal.add((newState: AgentState) => {
+			this.handleNewState(newState);
 		});
 	}
 
-	public stopWalking() {
-		(this.moduleRegistry.get(ModulePathfinding) as ModulePathfinding).stop();
-		this.stateStack.finishedState();
+	public async goto(goal: pathfinder.goals.Goal) {
+		const id = this.stateStack.newState({ type: "moving", goal });
+		await this.stateStack.waitForState(id);
 	}
 
 	public async mineChunk(spec: ChunkMiningSpec) {
-		this.stateStack.newState({ type: "miningChunk", spec });
-		await this.bot.building.mineChunk(spec);
+		const id = this.stateStack.newState({ type: "miningChunk", spec });
+		await this.stateStack.waitForState(id);
+	}
+
+	//
+
+	private async handleNewState(state: AgentState) {
+		switch (state.type) {
+			case "combat": {
+				if (state.isSelfDefense) return;
+				await (this.moduleRegistry.get(ModulePvp) as ModulePvp).killEntity(state.entity);
+				break;
+			}
+
+			case "miningChunk": {
+				await this.bot.building.mineChunk(state.spec);
+				break;
+			}
+
+			case "moving": {
+				await (this.moduleRegistry.get(ModulePathfinding) as ModulePathfinding).goto(state.goal);
+			}
+		}
+
 		this.stateStack.finishedState();
 	}
 }

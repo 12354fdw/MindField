@@ -15,8 +15,14 @@ export class ModulePvp extends BaseModule {
 
 		bot.loadPlugin(pvp.plugin);
 
-		bot.on("entityHurt", async (entity, attacker) => {
+		bot.on("entityHurt", async (entity, source) => {
 			if (entity !== bot.entity) return;
+
+			this.agent.stateStack.newState({
+				type: "combat",
+				isSelfDefense: true,
+				entity: source,
+			});
 
 			bot.autoEat.setOpts({
 				minHealth: 10,
@@ -39,38 +45,40 @@ export class ModulePvp extends BaseModule {
 					break;
 				case Response.Defend:
 					bot.pvp.viewDistance = 8;
-					bot.pvp.attack(attacker);
-
-					await new Promise<void>((resolve) => {
-						bot.once("stoppedAttacking", () => {
-							resolve();
-						});
-					});
+					this.killEntity(source);
 
 					break;
 				case Response.Kill:
 					bot.pvp.viewDistance = 128;
-					bot.pvp.attack(attacker);
-
-					await new Promise<void>((resolve) => {
-						bot.once("stoppedAttacking", () => {
-							resolve();
-						});
-					});
+					this.killEntity(source);
 
 					break;
 				default:
 					break;
 			}
 
-			console.log("combat ended");
 			bot.autoEat.setOpts({
 				minHealth: 20,
+			});
+
+			this.agent.stateStack.finishedState();
+		});
+	}
+
+	public async killEntity(entity: entity.Entity) {
+		this.equipItems();
+		this.bot.pvp.attack(entity);
+
+		await new Promise<void>((resolve) => {
+			this.bot.once("stoppedAttacking", () => {
+				resolve();
 			});
 		});
 	}
 
-	public equipCombatItems() {
+	//
+
+	private equipItems() {
 		const bot = this.bot;
 
 		const axe = bot.inventory.items().find((item) => item.name.includes("axe"));
