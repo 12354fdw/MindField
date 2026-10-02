@@ -15,7 +15,7 @@ export class ModulePvp extends BaseModule {
 		bot.loadPlugin(pvp.plugin);
 
 		bot.on("entityHurt", async (entity, attacker) => {
-			if (entity !== bot.entity) return;
+			if (entity !== bot.entity && attacker) return;
 
 			this.agent.stateStack.newState({
 				type: "combat",
