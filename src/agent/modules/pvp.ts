@@ -8,11 +8,17 @@ export class ModulePvp extends BaseModule {
 		bot.loadPlugin(pvp.plugin);
 
 		bot.on("entityHurt", async (entity, source) => {
+			if (entity !== bot.entity) return;
+
+			this.agent.stateStack.newState({
+				type: "combat",
+				isSelfDefense: true,
+				entity: source,
+			});
+
 			bot.autoEat.setOpts({
 				minHealth: 10,
 			});
-
-			if (entity !== bot.entity) return;
 
 			this.equipItems();
 
@@ -27,6 +33,8 @@ export class ModulePvp extends BaseModule {
 			bot.autoEat.setOpts({
 				minHealth: 20,
 			});
+
+			this.agent.stateStack.finishedState();
 		});
 	}
 

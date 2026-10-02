@@ -38,7 +38,7 @@ export class Agent {
 		this.bot.agent = this;
 
 		const bot = this.bot;
-		this.moduleRegistry = new ModulesRegistry(bot);
+		this.moduleRegistry = new ModulesRegistry(bot, this);
 
 		this.bot.once("spawn", async () => {
 			this.moduleRegistry.initSpawn();
