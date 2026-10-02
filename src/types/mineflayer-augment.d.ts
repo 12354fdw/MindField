@@ -16,6 +16,7 @@ declare module "mineflayer" {
 
 	interface BotEvents {
 		serverAuth: () => void;
+		stoppedAttacking: () => void;
 	}
 }
 
