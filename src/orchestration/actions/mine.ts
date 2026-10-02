@@ -35,6 +35,7 @@ export class OrchestratedMiningAction extends OrchestratedAction<MiningActionOpt
 
 		if (!chunk) {
 			this.agentListenerRemoves.get(agent)!();
+			this.freeAgent(agent);
 			return;
 		}
 
