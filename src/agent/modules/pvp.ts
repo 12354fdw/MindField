@@ -15,7 +15,8 @@ export class ModulePvp extends BaseModule {
 		bot.loadPlugin(pvp.plugin);
 
 		bot.on("entityHurt", async (entity, attacker) => {
-			if (entity !== bot.entity && attacker) return;
+			if (entity !== bot.entity) return;
+			if (!attacker) return;
 
 			this.agent.stateStack.newState({
 				type: "combat",
@@ -95,10 +96,10 @@ export class ModulePvp extends BaseModule {
 		const combatFactor = this.getEquipmentFactor(this.bot.entity);
 		const enemyCombatFactor = this.getEquipmentFactor(entity) + this.getEntityTypeFactor(entity);
 
-		console.log(entity);
-		console.log("Own equipment factor ", this.getEquipmentFactor(this.bot.entity));
-		console.log("Enemy entity type factor ", entity.name, this.getEntityTypeFactor(entity));
-		console.log("Enemy equipment factor ", this.getEquipmentFactor(entity));
+		// console.log(entity);
+		// console.log("Own equipment factor ", this.getEquipmentFactor(this.bot.entity));
+		// console.log("Enemy entity type factor ", entity.name, this.getEntityTypeFactor(entity));
+		// console.log("Enemy equipment factor ", this.getEquipmentFactor(entity));
 		if (enemyCombatFactor > combatFactor + 25) return Response.Flee;
 		if (enemyCombatFactor > combatFactor) return Response.Defend;
 		if (combatFactor >= enemyCombatFactor) return Response.Kill;
