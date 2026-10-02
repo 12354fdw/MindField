@@ -31,7 +31,6 @@ export class StateStack {
 		const prevState = this.stack.pop();
 		if (prevState) {
 			this.stack.push(prevState);
-			this.stateSignal.emit(prevState.state);
 		} else {
 			const idleState: AgentState = { type: "idle" };
 			this.stack.push({ state: idleState, id: this.currentId++ });
