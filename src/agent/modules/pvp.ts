@@ -1,6 +1,5 @@
 import { BaseModule } from "./base.js";
 import pvp from "mineflayer-pvp";
-import { Bot } from "mineflayer";
 import { Item } from "prismarine-item";
 import { Entity } from "prismarine-entity";
 
@@ -15,13 +14,13 @@ export class ModulePvp extends BaseModule {
 
 		bot.loadPlugin(pvp.plugin);
 
-		bot.on("entityHurt", async (entity, source) => {
+		bot.on("entityHurt", async (entity, attacker) => {
 			if (entity !== bot.entity) return;
 
 			this.agent.stateStack.newState({
 				type: "combat",
 				isSelfDefense: true,
-				entity: source,
+				entity: attacker,
 			});
 
 			bot.autoEat.setOpts({
@@ -45,12 +44,12 @@ export class ModulePvp extends BaseModule {
 					break;
 				case Response.Defend:
 					bot.pvp.viewDistance = 8;
-					this.killEntity(source);
+					this.killEntity(attacker);
 
 					break;
 				case Response.Kill:
 					bot.pvp.viewDistance = 128;
-					this.killEntity(source);
+					this.killEntity(attacker);
 
 					break;
 				default:
@@ -65,8 +64,8 @@ export class ModulePvp extends BaseModule {
 		});
 	}
 
-	public async killEntity(entity: entity.Entity) {
-		this.equipItems();
+	public async killEntity(entity: Entity) {
+		this.equipCombatItems();
 		this.bot.pvp.attack(entity);
 
 		await new Promise<void>((resolve) => {
@@ -78,7 +77,7 @@ export class ModulePvp extends BaseModule {
 
 	//
 
-	private equipItems() {
+	private equipCombatItems() {
 		const bot = this.bot;
 
 		const axe = bot.inventory.items().find((item) => item.name.includes("axe"));
