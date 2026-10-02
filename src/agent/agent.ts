@@ -6,7 +6,7 @@ import pathfinder from "mineflayer-pathfinder";
 import { ModulePathfinding } from "./modules/pathfinding.js";
 import { ChunkMiningSpec } from "../orchestration/mining/miningPlanner.js";
 import { AgentState } from "./state.js";
-import { Signal } from "signal-ts";
+import { Signal } from "../types/signal.js";
 
 declare module "mineflayer" {
 	interface Bot {
