@@ -1,7 +1,5 @@
 import { CommandBuilder, CommandDispatcher } from "@12354fdw/lcmd";
 import { CommandContext } from "./context.js";
-import pathfinder from "mineflayer-pathfinder";
-import { MiningPlanner } from "../orchestration/mining/miningPlanner.js";
 import { Vec3 } from "vec3";
 import { OrchestratedMiningAction } from "../orchestration/actions/mine.js";
 

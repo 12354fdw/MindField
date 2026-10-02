@@ -18,7 +18,7 @@ export class OrchestratedMiningAction extends OrchestratedAction<MiningActionOpt
 		this.chunks = planner.chunks;
 
 		this.assignedAgents.forEach((agent) => {
-			const remove = agent.stateSignal.add((newState: AgentState) => {
+			const remove = agent.stateStack.stateSignal.add((newState: AgentState) => {
 				if (newState.type === "idle") {
 					this.assignChunkToAgent(agent);
 				}
@@ -30,7 +30,7 @@ export class OrchestratedMiningAction extends OrchestratedAction<MiningActionOpt
 		});
 	}
 
-	public assignChunkToAgent(agent: Agent) {
+	public async assignChunkToAgent(agent: Agent) {
 		const chunk = this.chunks.shift();
 
 		if (!chunk) {
@@ -39,6 +39,6 @@ export class OrchestratedMiningAction extends OrchestratedAction<MiningActionOpt
 			return;
 		}
 
-		agent.mineChunk(chunk);
+		await agent.mineChunk(chunk);
 	}
 }
