@@ -44,10 +44,10 @@ export class AgentWorker {
 			this.moduleRegistry.initSpawn();
 		});
 
-		this.stateStack.stateSignal.add((newState: AgentState) => {
-			this.handleNewState(newState);
-		});
+		this.stateStack.stateSignal.add(this.handleNewState);
 	}
+
+	//
 
 	public async goto(goal: Vec3) {
 		const id = this.stateStack.newState({ type: "moving", goal });
@@ -56,6 +56,11 @@ export class AgentWorker {
 
 	public async mineChunk(spec: ChunkMiningSpec) {
 		const id = this.stateStack.newState({ type: "miningChunk", spec });
+		await this.stateStack.waitForState(id);
+	}
+
+	public async collectBlock(blockName: string, amount: number) {
+		const id = this.stateStack.newState({ type: "colectBlock", blockName, amount });
 		await this.stateStack.waitForState(id);
 	}
 
@@ -76,6 +81,19 @@ export class AgentWorker {
 
 			case "moving": {
 				await (this.moduleRegistry.get(ModulePathfinding) as ModulePathfinding).goto(state.goal);
+				break;
+			}
+
+			case "colectBlock": {
+				const blockPos = this.bot.findBlocks({
+					matching: (block) => block.name === state.blockName,
+					count: state.amount,
+				});
+
+				const blocks = blockPos.map((pos) => this.bot.blockAt(pos)).filter((val) => val !== null);
+
+				await this.bot.collectBlock.collect(blocks);
+				break;
 			}
 		}
 

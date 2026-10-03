@@ -24,6 +24,10 @@ export class Agent {
 		await this.remote.mineChunk(spec);
 	}
 
+	public async collectBlock(blockName: string, amount: number) {
+		await this.remote.collectBlock(blockName, amount);
+	}
+
 	//
 
 	public async waitForIdle() {
