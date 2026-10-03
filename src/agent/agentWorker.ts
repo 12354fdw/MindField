@@ -44,7 +44,9 @@ export class AgentWorker {
 			this.moduleRegistry.initSpawn();
 		});
 
-		this.stateStack.stateSignal.add(this.handleNewState);
+		this.stateStack.stateSignal.add((newState) => {
+			this.handleNewState(newState);
+		});
 	}
 
 	//

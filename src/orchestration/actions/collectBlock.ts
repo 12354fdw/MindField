@@ -1,3 +1,4 @@
+import { Agent } from "../../agent/agent.js";
 import { OrchestratedAction } from "./base.js";
 
 type CollectionActionOptions = {
@@ -19,8 +20,13 @@ export class OrchestratedCollectionAction extends OrchestratedAction<CollectionA
 				this.agentManager.freeAgent(this.assignedAgents[i]);
 				continue;
 			}
-			await this.assignedAgents[i].collectBlock(blockName, agentAmount);
-			this.agentManager.freeAgent(this.assignedAgents[i]);
+
+			this.collectBlock(this.assignedAgents[i], blockName, agentAmount);
 		}
+	}
+
+	private async collectBlock(agent: Agent, blockName: string, amount: number) {
+		await agent.collectBlock(blockName, amount);
+		this.agentManager.freeAgent(agent);
 	}
 }
