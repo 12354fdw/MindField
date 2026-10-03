@@ -14,6 +14,21 @@ export function loader(bot: Bot) {
 	bot.building = {
 		mineChunk: async (chunkSpec) => {
 			const { x, y, z } = chunkSpec.center;
+
+			let allAir = true;
+			for (let dx = -3; dx <= 3; dx++) {
+				for (let dz = -3; dz <= 3; dz++) {
+					const block = bot.blockAt(new Vec3(x + dx, y, z + dz));
+					if (block && block.type !== 0) {
+						allAir = false;
+						break;
+					}
+				}
+				if (!allAir) break;
+			}
+
+			if (allAir) return;
+
 			await bot.agent.goto(chunkSpec.center);
 
 			for (let dx = -3; dx <= 3; dx++) {
