@@ -18,4 +18,9 @@ export type AgentState =
 	| {
 			type: "miningChunk";
 			spec: ChunkMiningSpec;
+	  }
+	| {
+			type: "colectBlock";
+			blockName: string;
+			amount: number;
 	  };

@@ -6,6 +6,7 @@ import { ModulePvp } from "./pvp.js";
 import { ModuleBuilding } from "./building.js";
 import { ModuleTool } from "./tool.js";
 import { AgentWorker } from "../agentWorker.js";
+import { ModuleCollectBlock } from "./collectBlock.js";
 
 export class ModulesRegistry {
 	private modules = new Set<BaseModule>();
@@ -19,6 +20,7 @@ export class ModulesRegistry {
 		this.registerModule(ModulePvp);
 		this.registerModule(ModuleBuilding);
 		this.registerModule(ModuleTool);
+		this.registerModule(ModuleCollectBlock);
 	}
 
 	public initSpawn() {
